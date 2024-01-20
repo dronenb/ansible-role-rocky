@@ -1,2 +1,23 @@
 ---
-# tasks file for dronenb.rocky
+# tasks file for debian
+- name: Upgrade all packages
+  become: true
+  ansible.builtin.dnf:
+    name: "*"
+    state: latest # noqa: package-latest
+
+- name: Install packages
+  when: dnf_packages is defined
+  become: true
+  ansible.builtin.dnf:
+    state: present
+    name: "{{ dnf_packages }}"
+
+- name: Include Bash role
+  ansible.builtin.include_role:
+    name: dronenb.bash
+
+# This must come after the apt cache update
+- name: Include Vim role
+  ansible.builtin.include_role:
+    name: dronenb.vim
